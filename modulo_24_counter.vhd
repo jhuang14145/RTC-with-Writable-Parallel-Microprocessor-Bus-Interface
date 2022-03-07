@@ -16,36 +16,54 @@ entity modulo_24_counter is
 		);
 end modulo_24_counter;
 
-architecture behavior of modulo_24_counter is	
-	signal counter : integer := 0; 
-	signal max_c : STD_LOGIC := '0';
-begin			
-	process(clk)
-	begin	   			 
-		count <= std_logic_vector(to_unsigned(counter,6));
-		if(cnt_en_2 = '0') then
-			-- do nothing		
-		elsif(rst_n = '0') then
-			count <= "000000";
-			max_count <= '0'; 
-			max_c <= '0';
-		else 
-			if(max_c= '1' and rising_edge(clk)) then
+architecture behavior of modulo_24_counter is	 
+
+begin	
+	process(clk)  
+	variable counter_dig1 : integer := 0;  -- this is the tens place  	 
+	variable counter_dig2 : integer := 0;  -- this is the ones place 
+	variable max_c : std_logic := '0';
+	begin
+		if(rising_edge(clk)) then 		
+			if(rst_n = '0') then
+				count <= "000000";
+				counter_dig1 := 0;
+				counter_dig2 := 0; 
 				max_count <= '0';
-				max_c <= '0';
-			end if;
-			
-			if(load_en = '1') then
-				count <= setting;
-			elsif(cnt_en_1 = '1' and rising_edge(clk)) then
-				if(counter = 23) then
-					max_count <= '1';  
-					max_c <= '1';
-					counter <= 0;
-				else
-					counter <= counter + 1;
+			else 
+				if(max_c= '1') then
+					max_count <= '0';
+					max_c := '0';
+				end if;  
+				
+				if(load_en = '1') then 
+					counter_dig2 := (to_integer(unsigned(setting(5 downto 4))));   -- updates the tens place in bcd
+					counter_dig1 := (to_integer(unsigned(setting(3 downto 0))));	    -- updates the ones place in bcd  
+				elsif(cnt_en_2 = '0') then 
+					null; -- do nothing;	 
+				elsif(cnt_en_1 = '1') then 
+					if(counter_dig2 = 2 and counter_dig1 = 3) then
+							max_count <= '1';  
+							max_c := '1';
+							counter_dig1 := 0;
+							counter_dig2 := 0; 
+					elsif(counter_dig1 = 9) then
+						if(counter_dig2 = 2 and counter_dig1 = 3) then
+							max_count <= '1';  
+							max_c := '1';
+							counter_dig1 := 0;
+							counter_dig2 := 0; 
+						else
+							counter_dig2 := counter_dig2 + 1;
+							counter_dig1 := 0;
+						end if;		
+					else
+						counter_dig1 := counter_dig1 + 1;		
+					end if;	 
+					
 				end if;
-			end if;
+			end if;	
 		end if;
+		count <= std_logic_vector(to_unsigned(counter_dig2,2)) & std_logic_vector(to_unsigned(counter_dig1,4));
 	end process;
 end behavior;

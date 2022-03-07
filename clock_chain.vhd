@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.std_logic_1164.all; 
-library Task2;
-use Task2.all;
+library Task3;
+use Task3.all;
 
 entity clock_chain is
 	port(
