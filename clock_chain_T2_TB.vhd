@@ -1,5 +1,3 @@
--- Testbench for Task 2 Laboratory 11 - clock chain entity
-	
 -- This testbench tests the basic operatioin of the count chain.
 -- It does not verify clr_n, cnt_ent_2, nor setting an initial
 -- count. However, you design must have this capability.
