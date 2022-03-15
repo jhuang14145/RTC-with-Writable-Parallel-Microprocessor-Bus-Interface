@@ -1,5 +1,3 @@
--- Testbench for Task 3 Laboratory 11 Top-Level rtc_parallel_load
-
 -- Ken Short
 	
 -- This testbench uses procedures to simulate the bus functional
